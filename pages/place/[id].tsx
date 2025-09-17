@@ -10,6 +10,20 @@ type Place = {
   phone?: string
 }
 
+const imageMap: Record<number, string> = {
+  1: '김치찌개.jpg',
+  2: '떡볶이.jpg',
+  3: '스테이크.jpg',
+  4: '초밥.jpg',
+  5: '치킨.jpg'
+}
+
+function getImageForPlace(p: Place | null) {
+  if (!p) return '/image/김치찌개.jpg'
+  if (typeof p.id === 'number' && imageMap[p.id]) return `/image/${imageMap[p.id]}`
+  return `https://source.unsplash.com/featured/?${encodeURIComponent(p.name)}`
+}
+
 export default function PlacePage() {
   const router = useRouter()
   const { id } = router.query
@@ -48,7 +62,7 @@ export default function PlacePage() {
     <div style={{ padding: 24 }} className="container">
       <div className="card">
         <div style={{ display: "flex", gap: 16 }}>
-          <img src={`https://source.unsplash.com/featured/?${encodeURIComponent(place.name)}`} style={{ width: 240, height: 160, borderRadius: 8, objectFit: "cover" }} />
+          <img src={getImageForPlace(place)} style={{ width: 240, height: 160, borderRadius: 8, objectFit: "cover" }} />
           <div>
             <h2 style={{ margin: 0 }}>{place.name}</h2>
             <div className="muted" style={{ marginTop: 6 }}>{place.address}</div>
@@ -87,4 +101,3 @@ export default function PlacePage() {
     </div>
   )
 }
-

@@ -10,6 +10,19 @@ type Place = {
   phone?: string
 }
 
+const imageMap: Record<number, string> = {
+  1: '김치찌개.jpg',
+  2: '떡볶이.jpg',
+  3: '스테이크.jpg',
+  4: '초밥.jpg',
+  5: '치킨.jpg'
+}
+
+function getImageForPlace(p: Place) {
+  if (typeof p.id === 'number' && imageMap[p.id]) return `/image/${imageMap[p.id]}`
+  return `https://source.unsplash.com/featured/?${encodeURIComponent(p.name)}`
+}
+
 function ReservationModal({ place, onClose }: { place: Place | null; onClose: () => void }) {
   const [datetime, setDatetime] = useState<string>("")
   const [partySize, setPartySize] = useState<number>(2)
@@ -185,7 +198,7 @@ export default function Home() {
               {recommended.map((p) => (
                 <div key={String(p.id)} style={{ minWidth: 180 }}>
                   <a href={`/place/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <img style={{ width: '100%', height: 110, objectFit: 'cover', borderRadius: 6 }} src={`https://source.unsplash.com/featured/?${encodeURIComponent(p.name)}`} alt={p.name} />
+                    <img style={{ width: '100%', height: 110, objectFit: 'cover', borderRadius: 6 }} src={getImageForPlace(p)} alt={p.name} />
                     <div style={{ marginTop: 6, fontWeight: 600 }}>{p.name}</div>
                     <div className="muted">{p.category}</div>
                   </a>
@@ -213,7 +226,7 @@ export default function Home() {
               ) : (
                 results.map((p) => (
                   <div key={String(p.id)} className="placeRow">
-                    <img className="placeImg" src={`https://source.unsplash.com/featured/?${encodeURIComponent(p.name)}`} alt={p.name} />
+                    <img className="placeImg" src={getImageForPlace(p)} alt={p.name} />
                     <div className="placeInfo">
                       <div className="placeName">{p.name}</div>
                       <div className="muted">{p.category}</div>
