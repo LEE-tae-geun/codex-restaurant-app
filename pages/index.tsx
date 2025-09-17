@@ -69,12 +69,26 @@ function ReservationModal({ place, onClose }: { place: Place | null; onClose: ()
 export default function Home() {
   const [q, setQ] = useState("")
   const [results, setResults] = useState<Place[]>([])
+  const [recommended, setRecommended] = useState<Place[]>([])
   const mapRef = useRef<HTMLDivElement | null>(null)
   const kakaoLoaded = useRef(false)
   const markersRef = useRef<any[]>([])
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null)
 
   useEffect(() => {
+    // Load recommended places on first render
+    ;(async () => {
+      try {
+        const resp = await fetch('/api/places')
+        const json = await resp.json()
+        const rec = json.results || []
+        setRecommended(rec.slice(0, 4))
+        // show recommended as initial results so the first screen isn't empty
+        setResults(rec)
+      } catch (err) {
+        console.error('Failed to load recommended', err)
+      }
+    })()
     const key = process.env.NEXT_PUBLIC_KAKAO_JS_KEY
     if (!key) return
 
@@ -166,6 +180,20 @@ export default function Home() {
       <div className="layout">
         <div className="left">
           <div className="card">
+            <div style={{ fontWeight: 700 }}>추천 식당</div>
+            <div style={{ marginTop: 10, display: 'flex', gap: 10, overflowX: 'auto' }}>
+              {recommended.map((p) => (
+                <div key={String(p.id)} style={{ minWidth: 180 }}>
+                  <a href={`/place/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <img style={{ width: '100%', height: 110, objectFit: 'cover', borderRadius: 6 }} src={`https://source.unsplash.com/featured/?${encodeURIComponent(p.name)}`} alt={p.name} />
+                    <div style={{ marginTop: 6, fontWeight: 600 }}>{p.name}</div>
+                    <div className="muted">{p.category}</div>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="card">
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <div style={{ fontWeight: 700 }}>검색 결과</div>
               <div className="muted">{results.length}곳</div>
@@ -215,4 +243,3 @@ export default function Home() {
     </div>
   )
 }
-

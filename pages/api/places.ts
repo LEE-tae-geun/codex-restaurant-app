@@ -8,21 +8,48 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const sample = [
     {
       id: 1,
-      name: "맛있는 김밥",
+      name: "맛있는 김치찌개",
       category: "한식",
-      address: "서울시 강남구",
+      address: "서울시 강남구 역삼동 123-4",
       lat: 37.4979,
       lng: 127.0276,
       phone: "02-000-0000"
     },
     {
       id: 2,
-      name: "전통 떡볶이",
+      name: "통큰 떡볶이",
       category: "분식",
-      address: "서울시 마포구",
+      address: "서울시 마포구 연남동 45-6",
       lat: 37.5563,
       lng: 126.9227,
       phone: "02-111-1111"
+    },
+    {
+      id: 3,
+      name: "바삭 치킨",
+      category: "치킨",
+      address: "서울시 송파구 잠실동 77-1",
+      lat: 37.5145,
+      lng: 127.1054,
+      phone: "02-222-2222"
+    },
+    {
+      id: 4,
+      name: "초밥 스타",
+      category: "일식",
+      address: "서울시 종로구 관철동 10-2",
+      lat: 37.5715,
+      lng: 126.9812,
+      phone: "02-333-3333"
+    },
+    {
+      id: 5,
+      name: "그릴 스테이크",
+      category: "양식",
+      address: "서울시 용산구 이태원동 34-5",
+      lat: 37.5347,
+      lng: 126.9940,
+      phone: "02-444-4444"
     }
   ]
 
@@ -64,10 +91,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Simple filter by q if provided
-  const qStr = typeof q === "string" ? q.toLowerCase() : ""
-  const results = sample.filter((p) =>
-    qStr ? p.name.toLowerCase().includes(qStr) || p.category.toLowerCase().includes(qStr) : true
-  )
+  const qStr = typeof q === "string" ? q.toLowerCase().trim() : ""
+
+  // If there's a query, split it into tokens and match any token against name/category/address/phone
+  let results = sample
+  if (qStr.length > 0) {
+    const tokens = qStr.split(/\s+/).filter(Boolean)
+    results = sample.filter((p) => {
+      const hay = `${p.name} ${p.category} ${p.address} ${p.phone}`.toLowerCase()
+      return tokens.every((t) => hay.includes(t))
+    })
+  }
 
   res.status(200).json({ results, source: "mock", query: { q, lat, lng } })
 }
+
