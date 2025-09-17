@@ -1,0 +1,43 @@
+{
+  "name": "codex-monorepo",
+  "private": true,
+  "description": "Tools for repo-wide maintenance.",
+  "homepage": "https://LEE-tae-geun.github.io/codex-rest",
+  "scripts": {
+    "format": "prettier --check *.json *.md .github/workflows/*.yml **/*.js",
+    "format:fix": "prettier --write *.json *.md .github/workflows/*.yml **/*.js",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "export": "next export",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d out"
+  },
+  "devDependencies": {
+    "@types/node": "24.5.0",
+    "@types/react": "19.1.13",
+    "gh-pages": "^5.0.0",
+    "prettier": "^3.5.3",
+    "prisma": "^6.16.2",
+    "typescript": "5.9.2"
+  },
+  "resolutions": {
+    "braces": "^3.0.3",
+    "micromatch": "^4.0.8",
+    "semver": "^7.7.1"
+  },
+  "overrides": {
+    "punycode": "^2.3.1"
+  },
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@10.8.1",
+  "dependencies": {
+    "@prisma/client": "^6.16.2",
+    "next": "^15.5.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  }
+}
